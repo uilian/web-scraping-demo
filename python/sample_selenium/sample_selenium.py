@@ -1,16 +1,48 @@
 import bs4
-import requests
 import time
+from selenium import webdriver
 
 
-def scrap_imdb():
-    # pass the URL
+def selenium_access():
+    """
+    Overkill, just to prove it can be done with Selenium.
+    """
+    options = webdriver.ChromeOptions()
+    options.add_argument(
+        "user-data-dir=/home/uilian/.config/google-chrome/Default/")
+    driver = webdriver.Chrome(
+        executable_path='/opt/selenium/chromedrive/chromedriver',
+        chrome_options=options)
     url = 'http://www.imdb.com/search/title'
     params = '?release_date=2010,2017&title_type=feature&user_rating=1.0,10'
-    url = requests.get(url + params)
-    # read the source from the URL
-    read_html = url.text
-    parse_result_bs(read_html)
+    # Optional argument, if not specified will search path.
+    driver.get(url + params)
+    time.sleep(1)
+
+    # One can simulate user input instead of sending
+    # all on the URL
+
+    # parameter1 = driver.find_element_by_name('parameter1')
+    # parameter1.send_keys(config_properties.parameter1)
+
+    # parameter2 = driver.find_element_by_name('parameter2')
+    # parameter2.send_keys(config_properties.parameter2)
+
+    # link = driver.find_element_by_link_text('Submit')
+    # link.click()
+    # time.sleep(1)
+
+    # button_2 = driver.find_element_by_name('button2')
+    # button_2.click()
+
+    # title = driver.find_element_by_name("title")
+    # driver.execute_script(
+    #     "arguments[0].value = arguments[1]",
+    #     title, config_properties.title)
+
+    page_result = driver.page_source
+    driver.quit()
+    parse_result_bs(page_result)
 
 
 def parse_result_bs(html_content):
@@ -51,6 +83,4 @@ def parse_result_bs(html_content):
             file.write('\n\n')
     file.close()
 
-
-scrap_imdb()
-
+selenium_access()
